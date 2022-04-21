@@ -67,22 +67,10 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     private ImageView mIvFlashLight;
     private TextView mTvFlashLightText;
     private Executor mQrCodeExecutor;
-    private Handler mHandler;
 
     private final String GOT_RESULT = "com.blikoon.qrcodescanner.got_qr_scan_relult";
     private final String ERROR_DECODING_IMAGE = "com.blikoon.qrcodescanner.error_decoding_image";
     private final String LOGTAG = "QRScannerQRCodeActivity";
-    private Context mApplicationContext;
-
-    private static Intent createIntent(Context context) {
-        Intent i = new Intent(context, QrCodeActivity.class);
-        return i;
-    }
-
-    public static void launch(Context context) {
-        Intent i = createIntent(context);
-        context.startActivity(i);
-    }
 
 
     @Override
@@ -92,14 +80,12 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         setContentView(R.layout.activity_qr_code);
         initView();
         initData();
-        mApplicationContext = getApplicationContext();
-
     }
 
     private void checkPermission() {
         boolean hasHardware = checkCameraHardWare(this);
         if (hasHardware) {
-            if (!hasCameraPermission()) {
+            if (hasNoCameraPermission()) {
                 findViewById(R.id.qr_code_view_background).setVisibility(View.VISIBLE);
                 mQrCodeFinderView.setVisibility(View.GONE);
                 mPermissionOk = false;
@@ -128,12 +114,12 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         CameraManager.init(this);
         mInactivityTimer = new InactivityTimer(QrCodeActivity.this);
         mQrCodeExecutor = Executors.newSingleThreadExecutor();
-        mHandler = new WeakHandler(this);
+        new WeakHandler(this);
     }
 
-    private boolean hasCameraPermission() {
+    private boolean hasNoCameraPermission() {
         PackageManager pm = getPackageManager();
-        return PackageManager.PERMISSION_GRANTED == pm.checkPermission("android.permission.CAMERA", getPackageName());
+        return PackageManager.PERMISSION_GRANTED != pm.checkPermission("android.permission.CAMERA", getPackageName());
     }
 
     @Override
@@ -186,12 +172,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         mInactivityTimer.onActivity();
         playBeepSoundAndVibrate();
         if (null == result) {
-            mDecodeManager.showCouldNotReadQrCodeFromScanner(this, new DecodeManager.OnRefreshCameraListener() {
-                @Override
-                public void refresh() {
-                    restartPreview();
-                }
-            });
+            mDecodeManager.showCouldNotReadQrCodeFromScanner(this, this::restartPreview);
         } else {
             String resultString = result.getText();
 
@@ -288,11 +269,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     /**
      * When the beep has finished playing, rewind to queue up another one.
      */
-    private final MediaPlayer.OnCompletionListener mBeepListener = new MediaPlayer.OnCompletionListener() {
-        public void onCompletion(MediaPlayer mediaPlayer) {
-            mediaPlayer.seekTo(0);
-        }
-    };
+    private final MediaPlayer.OnCompletionListener mBeepListener = mediaPlayer -> mediaPlayer.seekTo(0);
 
     @Override
     public void onClick(View v) {
@@ -306,7 +283,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
         }else if(v.getId() == R.id.qr_code_header_black_pic)
         {
-            if (!hasCameraPermission()) {
+            if (hasNoCameraPermission()) {
                     mDecodeManager.showPermissionDeniedDialog(this);
                 } else {
                     openSystemAlbum();
@@ -339,12 +316,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
     private void handleResult(String resultString) {
         if (TextUtils.isEmpty(resultString)) {
-            mDecodeManager.showCouldNotReadQrCodeFromScanner(this, new DecodeManager.OnRefreshCameraListener() {
-                @Override
-                public void refresh() {
-                    restartPreview();
-                }
-            });
+            mDecodeManager.showCouldNotReadQrCodeFromScanner(this, this::restartPreview);
         } else {
             //Got result from scanning QR Code with users camera
             Log.d(LOGTAG,"Got scan result from user loaded image :"+resultString);
@@ -387,12 +359,16 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 null, MediaStore.Images.Media._ID + " = ? ", new String[]{document_id}, null);
         cursor.moveToFirst();
-        String path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+        int idx = cursor.getColumnIndex(MediaStore.Images.Media.DATA);
+        if(idx < 0) {
+            idx = 0;
+        }
+        String path = cursor.getString(idx);
         cursor.close();
         return path;
     }
 
-    private DecodeImageCallback mDecodeImageCallback = new DecodeImageCallback() {
+    private final DecodeImageCallback mDecodeImageCallback = new DecodeImageCallback() {
         @Override
         public void decodeSucceed(Result result) {
             //Got scan result from scaning an image loaded by the user
@@ -414,8 +390,8 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     };
 
     private static class WeakHandler extends Handler {
-        private WeakReference<QrCodeActivity> mWeakQrCodeActivity;
-        private DecodeManager mDecodeManager = new DecodeManager();
+        private final WeakReference<QrCodeActivity> mWeakQrCodeActivity;
+        private final DecodeManager mDecodeManager = new DecodeManager();
 
         public WeakHandler(QrCodeActivity imagePickerActivity) {
             super();
@@ -446,12 +422,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         private void handleResult(String resultString) {
             QrCodeActivity imagePickerActivity = mWeakQrCodeActivity.get();
 
-            mDecodeManager.showResultDialog(imagePickerActivity, resultString, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
+            mDecodeManager.showResultDialog(imagePickerActivity, resultString, (dialog, which) -> dialog.dismiss());
         }
 
     }

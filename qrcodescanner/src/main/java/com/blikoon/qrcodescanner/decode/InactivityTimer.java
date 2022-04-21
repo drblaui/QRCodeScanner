@@ -2,7 +2,9 @@ package com.blikoon.qrcodescanner.decode;
 
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
+
+
+import androidx.annotation.NonNull;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

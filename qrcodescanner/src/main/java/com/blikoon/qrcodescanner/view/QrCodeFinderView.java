@@ -25,17 +25,17 @@ public final class QrCodeFinderView extends RelativeLayout {
     private static final long ANIMATION_DELAY = 100L;
     private static final int OPAQUE = 0xFF;
 
-    private Context mContext;
-    private Paint mPaint;
+    private final Context mContext;
+    private final Paint mPaint;
     private int mScannerAlpha;
-    private int mMaskColor;
-    private int mFrameColor;
-    private int mLaserColor;
-    private int mTextColor;
+    private final int mMaskColor;
+    private final int mFrameColor;
+    private final int mLaserColor;
+    private final int mTextColor;
     private Rect mFrameRect;
-    private int mFocusThick;
-    private int mAngleThick;
-    private int mAngleLength;
+    private final int mFocusThick;
+    private final int mAngleThick;
+    private final int mAngleLength;
 
     public QrCodeFinderView(Context context) {
         this(context, null);
@@ -89,8 +89,8 @@ public final class QrCodeFinderView extends RelativeLayout {
         if (frame == null) {
             return;
         }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
+        int width = getWidth();
+        int height = getHeight();
 
         mPaint.setColor(mMaskColor);
         canvas.drawRect(0, 0, width, frame.top, mPaint);
@@ -126,9 +126,6 @@ public final class QrCodeFinderView extends RelativeLayout {
 
     /**
      * Draw four purple angles
-     *
-     * @param canvas
-     * @param rect
      */
     private void drawAngle(Canvas canvas, Rect rect) {
         mPaint.setColor(mLaserColor);

@@ -23,11 +23,6 @@ public class QrUtils {
 
     /**
      * YUV420sp
-     *
-     * @param inputWidth
-     * @param inputHeight
-     * @param scaled
-     * @return
      */
     public static byte[] getYUV420sp(int inputWidth, int inputHeight, Bitmap scaled) {
         int[] argb = new int[inputWidth * inputHeight];
@@ -57,8 +52,6 @@ public class QrUtils {
      *
      * @param yuv420sp inputWidth * inputHeight * 3 / 2
      * @param argb inputWidth * inputHeight
-     * @param width
-     * @param height
      */
     private static void encodeYUV420SP(byte[] yuv420sp, int[] argb, int width, int height) {
         final int frameSize = width * height;
@@ -87,11 +80,6 @@ public class QrUtils {
                 Y = ((66 * R + 129 * G + 25 * B + 128) >> 8) + 16;
                 U = ((-38 * R - 74 * G + 112 * B + 128) >> 8) + 128;
                 V = ((112 * R - 94 * G - 18 * B + 128) >> 8) + 128;
-
-                //
-                Y = Math.max(0, Math.min(Y, 255));
-                U = Math.max(0, Math.min(U, 255));
-                V = Math.max(0, Math.min(V, 255));
 
                 // NV21 has a plane of Y and interleaved planes of VU each sampled by a factor of 2
                 // meaning for every 4 Y pixels there are 1 V and 1 U. Note the sampling is every other
@@ -153,7 +141,7 @@ public class QrUtils {
     public static Result decodeImage(byte[] data, int width, int height) {
         Result result = null;
         try {
-            Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>();
+            Hashtable<DecodeHintType, Object> hints = new Hashtable<>();
             hints.put(DecodeHintType.CHARACTER_SET, "utf-8");
             hints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
             hints.put(DecodeHintType.POSSIBLE_FORMATS, BarcodeFormat.QR_CODE);
@@ -164,7 +152,7 @@ public class QrUtils {
             // BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
             QRCodeReader reader2 = new QRCodeReader();
             result = reader2.decode(bitmap1, hints);
-        } catch (ReaderException e) {
+        } catch (ReaderException ignored) {
         }
         return result;
     }

@@ -85,7 +85,7 @@ final class DecodeHandler extends Handler {
                     new PlanarYUVLuminanceSource(mRotatedData, width, height, 0, 0, width, height, false);
             BinaryBitmap bitmap1 = new BinaryBitmap(new HybridBinarizer(source));
             rawResult = mQrCodeReader.decode(bitmap1, mHints);
-        } catch (ReaderException e) {
+        } catch (ReaderException ignored) {
         } finally {
             mQrCodeReader.reset();
         }

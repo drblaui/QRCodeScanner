@@ -12,8 +12,8 @@ public class DecodeImageThread implements Runnable {
     private byte[] mData;
     private int mWidth;
     private int mHeight;
-    private String mImgPath;
-    private DecodeImageCallback mCallback;
+    private final String mImgPath;
+    private final DecodeImageCallback mCallback;
 
     public DecodeImageThread(String imgPath, DecodeImageCallback callback) {
         this.mImgPath = imgPath;

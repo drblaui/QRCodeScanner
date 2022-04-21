@@ -19,8 +19,7 @@ public class ScreenUtils {
 
     public static int getScreenHeight(Context context) {
         DisplayMetrics dm = context.getResources().getDisplayMetrics();
-        int screenHeight = dm.heightPixels;
-        return screenHeight;
+        return dm.heightPixels;
     }
 
 }
