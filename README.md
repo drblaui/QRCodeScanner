@@ -103,4 +103,4 @@ GPLv3
 * where possible, lambda expressions have been used
 
 # Found a bug?
-Submit a [github issue](https://github.com/blikoon/QRCodeScanner/issues/new)
+Submit a [github issue](https://github.com/drblaui/QRCodeScanner/issues/new)

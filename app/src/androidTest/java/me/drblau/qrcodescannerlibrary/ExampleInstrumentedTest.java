@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.blikoon.qrcodescannerlibrary", appContext.getPackageName());
+        assertEquals("me.drblau.qrcodescannerlibrary", appContext.getPackageName());
     }
 }
