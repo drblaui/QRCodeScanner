@@ -1,3 +1,7 @@
+/**
+ * This code is a lightly modified version of the QRCode Scanner from Blikoon
+ * You can find the original here: https://github.com/blikoon/QRCodeScanner
+* */
 package me.drblau.qrcodescanner;
 
 

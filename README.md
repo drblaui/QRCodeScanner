@@ -98,6 +98,10 @@ https://www.youtube.com/watch?v=R9JxDpKpkAk
 # Licence
 GPLv3
 
+# Things changed in this distribution
+* Some unused functions have been removed
+* where possible, lambda expressions have been used
+
 # Found a bug?
 Submit a [github issue](https://github.com/blikoon/QRCodeScanner/issues/new)
 
