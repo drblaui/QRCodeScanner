@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import me.drblau.qrcodescanner.QrCodeActivity;
 
-import com.blikoon.qrcodescannerlibrary.R;
 
 public class MainActivity extends AppCompatActivity {
     private Button button;
