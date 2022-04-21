@@ -23,7 +23,7 @@ QR Scanning library based on zxing for android devices API 15 and up
 * In your app module gradle file just add the dependency
 ```java
    dependencies {
-    compile 'com.github.drblaui:QRCodeScanner:0.1.3'
+    compile 'com.github.drblaui:QRCodeScanner:0.1.6'
    }
 ```
 Be sure to check the latest version [here](https://github.com/drblaui/QRCodeScanner/releases) 
