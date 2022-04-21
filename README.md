@@ -1,4 +1,5 @@
 # QRCodeScanner
+This is a fork of [Blikoons QRCode Scanner](https://github.com/blikoon/QRCodeScanner) adapted to work for my needings. Possibly also works for newer Android Versions
 QR Scanning library based on zxing for android devices API 15 and up
 
 ![In action](https://github.com/blikoon/QRCodeScanner/blob/master/showOff.gif)
