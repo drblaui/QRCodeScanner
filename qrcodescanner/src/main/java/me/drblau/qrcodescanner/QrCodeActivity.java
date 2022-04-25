@@ -5,6 +5,7 @@
 package me.drblau.qrcodescanner;
 
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -31,6 +32,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import me.drblau.qrcodescanner.camera.CameraManager;
 import me.drblau.qrcodescanner.decode.CaptureActivityHandler;
 import me.drblau.qrcodescanner.decode.DecodeImageCallback;
@@ -44,6 +49,8 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import javax.net.ssl.ManagerFactoryParameters;
 
 
 public class QrCodeActivity extends Activity implements Callback, OnClickListener {
@@ -130,7 +137,7 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         super.onResume();
         checkPermission();
         if (!mPermissionOk) {
-            mDecodeManager.showPermissionDeniedDialog(this);
+            ActivityCompat.requestPermissions(QrCodeActivity.this, new String[] {Manifest.permission.CAMERA}, 1);
             return;
         }
         SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
@@ -150,6 +157,22 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         initBeepSound();
         mVibrate = true;
 
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 1) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    //Reinstate Camera
+                    SurfaceHolder surfaceHolder = mSurfaceView.getHolder();
+                    initCamera(surfaceHolder);
+                }
+            } else {
+                mDecodeManager.showPermissionDeniedDialog(this);
+            }
+        }
     }
 
     @Override
