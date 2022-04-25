@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -132,6 +133,11 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
         return PackageManager.PERMISSION_GRANTED != pm.checkPermission("android.permission.CAMERA", getPackageName());
     }
 
+    private boolean hasNoMediaPermission() {
+        PackageManager pm = getPackageManager();
+        return pm.checkPermission("android.permission.READ_EXTERNAL_STORAGE", getPackageName()) != PackageManager.PERMISSION_GRANTED;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -171,6 +177,13 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
                 }
             } else {
                 mDecodeManager.showPermissionDeniedDialog(this);
+            }
+        }
+        else if (requestCode == 2) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if(ContextCompat.checkSelfPermission(QrCodeActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    openSystemAlbum();
+                }
             }
         }
     }
@@ -309,12 +322,15 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
 
         }else if(v.getId() == R.id.qr_code_header_black_pic)
         {
-            if (hasNoCameraPermission()) {
-                    mDecodeManager.showPermissionDeniedDialog(this);
-                } else {
-                    openSystemAlbum();
+            if (hasNoMediaPermission()) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    ActivityCompat.requestPermissions(QrCodeActivity.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE}, 2);
+                    return;
                 }
-
+                mDecodeManager.showPermissionDeniedDialog(this);
+            } else {
+                openSystemAlbum();
+            }
         }
 
     }
