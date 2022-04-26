@@ -79,8 +79,8 @@ public class QrCodeActivity extends Activity implements Callback, OnClickListene
     private TextView mTvFlashLightText;
     private Executor mQrCodeExecutor;
 
-    private final String GOT_RESULT = "com.blikoon.qrcodescanner.got_qr_scan_relult";
-    private final String ERROR_DECODING_IMAGE = "com.blikoon.qrcodescanner.error_decoding_image";
+    private final String GOT_RESULT = "me.drblau.qrcodescanner.got_qr_scan_result";
+    private final String ERROR_DECODING_IMAGE = "me.drblau.qrcodescanner.error_decoding_image";
     private final String LOGTAG = "QRScannerQRCodeActivity";
 
 
