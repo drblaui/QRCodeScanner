@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                 (dialog, which) -> dialog.dismiss());
                         alertDialog.show();
-                        return
+                        return;
                     }
                     String res = result.getData().getStringExtra("me.drblau.qrcodescanner.got_qr_scan_result");
                     System.out.println(res);
