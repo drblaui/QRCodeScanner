@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
         ActivityResultLauncher<Intent> mGetContent = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    //TODO
                     if (result == null || result.getData() == null) return;
                     if(result.getResultCode() != Activity.RESULT_OK) {
                         String res = result.getData().getStringExtra("me.drblau.qrcodescanner.error_decoding_image");
