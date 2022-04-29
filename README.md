@@ -31,61 +31,41 @@ Be sure to check the latest version [here](https://github.com/drblaui/QRCodeScan
 ```java
 private static final int REQUEST_CODE_QR_SCAN = 101;
 ```
+* Register activity for Result and catch it
+```java
+private static ActivityResultLauncher<Intent> mGetConten;
+
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    ...
+    mGetContent = registerForActivityResult(
+        new ActivityResultContracts.StartActivityForResult(),
+        result -> {
+            if (result == null || result.getData() == null) return;
+            if(result.getResultCode() != Activity.RESULT_OK) {
+                String res = result.getData().getStringExtra("me.drblau.qrcodescanner.error_decoding_image");
+                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+                alertDialog.setTitle("Scan Error");
+                alertDialog.setMessage("QR Code could not be scanned");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    (dialog, which) -> dialog.dismiss());
+                        alertDialog.show();
+                        return;
+            }
+            String res = result.getData().getStringExtra("me.drblau.qrcodescanner.got_qr_scan_result");
+            System.out.println(res);
+        }
+    )
+}
+```
+```
 * Start the QR Code scan activity, FOR RESULT,
 ```java
 @Override
 public void onClick(View v) {
    Intent i = new Intent(MainActivity.this,QrCodeActivity.class);
-   startActivityForResult( i,REQUEST_CODE_QR_SCAN);
+   mGetContent.launch(i);
 }
-```
-* And catch the scan result:
-```java
-protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if(resultCode != Activity.RESULT_OK)
-        {
-            Log.d(LOGTAG,"COULD NOT GET A GOOD RESULT.");
-            if(data==null)
-                return;
-            //Getting the passed result
-            String result = data.getStringExtra("com.blikoon.qrcodescanner.error_decoding_image");
-            if( result!=null)
-            {
-                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-                alertDialog.setTitle("Scan Error");
-                alertDialog.setMessage("QR Code could not be scanned");
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
-            return;
-
-        }
-        if(requestCode == REQUEST_CODE_QR_SCAN)
-        {
-            if(data==null)
-                return;
-            //Getting the passed result
-            String result = data.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
-            Log.d(LOGTAG,"Have scan result in your app activity :"+ result);
-            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
-            alertDialog.setTitle("Scan result");
-            alertDialog.setMessage(result);
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            alertDialog.show();
-
-        }
-    }
 ```
 * You're good to go!
 
